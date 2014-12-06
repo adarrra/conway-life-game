@@ -1,0 +1,15 @@
+.initial-hide{
+    display:none;
+}
+
+.dialog{
+    color: red;
+}
+
+.word{
+    margin-bottom: 10px;
+}
+
+#check {
+    margin-top: 10px;
+}
