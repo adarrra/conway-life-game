@@ -25,7 +25,7 @@ var Cell = {
 			}else if(livingCells >= 2){
 				return true;
 			}
-		}else if(livingCells == 3){ //не рождаются почему то
+		}else if(livingCells == 3){
 			return true;
 		}
 	}
@@ -65,7 +65,6 @@ var Universe = {
 
 		for(var i = 0; i < this.field.length; i++) {
 			for(var j = 0; j <  this.field[i].length; j++) {
-				if(this.field[i][j].alive == true){
 					var thisCell = this.field[i][j];
 					Cell.neighbors.topNeighborAlive = this.checkNeighborAndSetAlive(i-1,j);
 					Cell.neighbors.rightTopNeighborAlive = this.checkNeighborAndSetAlive(i-1,j+1);
@@ -77,17 +76,17 @@ var Universe = {
 					Cell.neighbors.topLeftNeighborAlive = this.checkNeighborAndSetAlive(i-1,j-1);
 
 					nextGenerationCells[i][j].alive = thisCell.checkNextGenerationStatus(thisCell.livingNeighborCounter());
-					/*if (neighbors.topNeighbor.alive)*/
-				}
 			}
 		}
 	},
 	updateGeneration: function(){
-		this.field = nextGenerationCells;//исправить
+		this.field = jQuery.extend(true, {}, nextGenerationCells);
 	}
 
 
 };
 
+
+//TODO: html - пользователь задает клетки или по умолчанию (идея - режим интересные фигуры), поколения - вручную или автоматически
 
 
