@@ -64,7 +64,7 @@ var Universe = {
 
 
 		for(var i = 0; i < this.field.length; i++) {
-			for(var j = 0; j <  this.field[i].length; j++) {
+			for(var j = 0; j <  this.field[i].length; j++) {//может добавить таки условие, чтоб только пустые с соседями
 					var thisCell = this.field[i][j];
 					Cell.neighbors.topNeighborAlive = this.checkNeighborAndSetAlive(i-1,j);
 					Cell.neighbors.rightTopNeighborAlive = this.checkNeighborAndSetAlive(i-1,j+1);
@@ -85,6 +85,27 @@ var Universe = {
 
 
 };
+
+//for UI grid
+
+ function gridDraw() {
+	for (var x=0.5; x < width; x += sizeCell){ //задать sizeCell, width, height
+		context.moveTo(x, 0);
+		context.lineTo(x, height);
+	}
+	for (var y=0.5; y <= height; y += sizeCell){
+		context.moveTo(0, y);
+		context.lineTo(width, y);
+	}
+	context.strokeStyle = '#eee';
+	context.fillStyle="#000";
+	context.stroke();
+};
+
+jQuery(document).ready(function	() {
+	var grid_canvas = document.getElementById("grid");
+	var context = grid_canvas.getContext("2d");
+});
 
 
 //TODO: html - пользователь задает клетки или по умолчанию (идея - режим интересные фигуры), поколения - вручную или автоматически

@@ -1,15 +1,8 @@
-.initial-hide{
-    display:none;
+.form-control.number{
+    width: 60px;
 }
 
-.dialog{
-    color: red;
-}
-
-.word{
-    margin-bottom: 10px;
-}
-
-#check {
-    margin-top: 10px;
+legend{
+    border-bottom: none;
+    margin-bottom: 5px;
 }

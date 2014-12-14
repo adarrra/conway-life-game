@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Hangman</title>
+	<title>Game of Life</title>
 	<link rel='stylesheet' href='css/bootstrap.css' type='text/css' media='all'>
 	<link rel = "stylesheet" href="css/style.css">
 	<meta charset="utf-8">
@@ -11,35 +11,39 @@
 </head>
 <body>
 <div class="container">
-	<h1>Hangman</h1>
+	<h1>Game of life</h1>
 	<div class="row">
-		<div class="hangman col-md-4">
-		</div>
-	</div>
-	<div class="row">
-		<p class="dialog">
-			Hi! Do you want to play? So press start!
-		</p>
-		<p class="definition initial-hide">
-			Hint: <span class="definition"></span>
-		</p>
-		<div class="word"></div>
-		<form id="lets-start">
-		<button type="submit" class="btn btn-primary" id ="start">Start</button>
-		</form>
-		<div class="guess initial-hide">
-			<form id="guess-letter">
-				<div class="form-group col-md-2">
-					<label for = "letter">input letter</label>
-					<input id="letter"
-						   class="form-control"
-						   type="text">
-					<button type="submit" class="btn btn-primary initial-hide" id = "check">Check</button>
-				</div>
+		<div class="scale col-md-6">
+			<div class="control-group">
+				<legend>Scale</legend>
+				<form class="form-inline">
 
+							<input type="number" id="gridWidth" class="number form-control" placeholder="10">
+					<span>X</span>
+
+							<input type="number" id="gridHeight" class="number form-control" placeholder="10">
+
+			<button type="submit" class="btn btn-default">Set</button>
 			</form>
+			</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="grid col-md-6">
+
+				<canvas id = "grid">
+
+				</canvas>
+				<script>
+
+				</script>
+			</div>
+			<div class="controls">
+
+			</div>
+
 		</div>
 	</div>
-</div>
 </body>
 </html>
+
