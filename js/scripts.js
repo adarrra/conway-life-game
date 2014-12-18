@@ -1,3 +1,5 @@
+//=================    Logic       ========================
+
 var Cell = {
 	alive: false,
 	neighbors: {
@@ -27,6 +29,8 @@ var Cell = {
 			}
 		}else if(livingCells == 3){
 			return true;
+		}else{
+			return false;
 		}
 	}
 
@@ -40,6 +44,14 @@ function cellCreator(){
 
 var nextGenerationCells = [];
 
+function objectLength (obj) {
+	var counter = 0;
+	for (key in obj) {
+		counter ++;
+	}
+	return counter;
+}
+
 var Universe = {
 	initialize: function (rows,stolets){
 		var field = [];
@@ -51,10 +63,10 @@ var Universe = {
 			}
 			field.push(row);
 		}
-	this.field = field;
+		this.field = field;
 	},
 	checkNeighborAndSetAlive: function(i,j) {
-		if (i >= 0 && j >= 0 && i < this.field.length && j < this.field[0].length) {
+		if (i >= 0 && j >= 0 && i <  objectLength(this.field) && j < objectLength(this.field[0])) {
 			return this.field[i][j].alive
 		}
 		return false;
@@ -63,19 +75,19 @@ var Universe = {
 		nextGenerationCells = jQuery.extend(true, {}, this.field);
 
 
-		for(var i = 0; i < this.field.length; i++) {
-			for(var j = 0; j <  this.field[i].length; j++) {//может добавить таки условие, чтоб только пустые с соседями
-					var thisCell = this.field[i][j];
-					Cell.neighbors.topNeighborAlive = this.checkNeighborAndSetAlive(i-1,j);
-					Cell.neighbors.rightTopNeighborAlive = this.checkNeighborAndSetAlive(i-1,j+1);
-					Cell.neighbors.rightNeighborAlive = this.checkNeighborAndSetAlive(i,j+1);
-					Cell.neighbors.bottomRightNeighborAlive = this.checkNeighborAndSetAlive(i+1,j+1);
-					Cell.neighbors.bottomNeighborAlive = this.checkNeighborAndSetAlive(i+1,j);
-					Cell.neighbors.bottomLeftNeighborAlive = this.checkNeighborAndSetAlive(i+1,j-1);
-					Cell.neighbors.leftNeighborAlive = this.checkNeighborAndSetAlive(i,j-1);
-					Cell.neighbors.topLeftNeighborAlive = this.checkNeighborAndSetAlive(i-1,j-1);
+		for(var i = 0; i < objectLength(this.field); i++) {
+			for(var j = 0; j <  objectLength(this.field[i]); j++) {//может добавить таки условие, чтоб только пустые с соседями
+				var thisCell = this.field[i][j];
+				Cell.neighbors.topNeighborAlive = this.checkNeighborAndSetAlive(i-1,j);
+				Cell.neighbors.rightTopNeighborAlive = this.checkNeighborAndSetAlive(i-1,j+1);
+				Cell.neighbors.rightNeighborAlive = this.checkNeighborAndSetAlive(i,j+1);
+				Cell.neighbors.bottomRightNeighborAlive = this.checkNeighborAndSetAlive(i+1,j+1);
+				Cell.neighbors.bottomNeighborAlive = this.checkNeighborAndSetAlive(i+1,j);
+				Cell.neighbors.bottomLeftNeighborAlive = this.checkNeighborAndSetAlive(i+1,j-1);
+				Cell.neighbors.leftNeighborAlive = this.checkNeighborAndSetAlive(i,j-1);
+				Cell.neighbors.topLeftNeighborAlive = this.checkNeighborAndSetAlive(i-1,j-1);
 
-					nextGenerationCells[i][j].alive = thisCell.checkNextGenerationStatus(thisCell.livingNeighborCounter());
+				nextGenerationCells[i][j].alive = thisCell.checkNextGenerationStatus(thisCell.livingNeighborCounter());
 			}
 		}
 	},
@@ -85,6 +97,8 @@ var Universe = {
 
 
 };
+
+
 
 //=================    for UI grid       ========================
 jQuery(document).ready(function	() {
@@ -105,34 +119,103 @@ jQuery(document).ready(function	() {
 		context.strokeStyle = 'black';
 		context.fillStyle = "#000";
 		context.stroke();
-	};
+	}
+
+	function gridClear(){
+		context.clearRect ( 0 , 0 , 401, 201 );
+		gridDraw();
+	}
+
 	gridDraw();
+
+	function born(a,b){
+		var s = a/10;
+		var r = b/10;
+		newUniverse.field[r][s].alive = true;
+	}
+	function die(a,b){
+		var s = a/10;
+		var r = b/10;
+		newUniverse.field[r][s].alive = false;
+	}
+
 	document.getElementById('grid').onclick = function (e) {
 		var x = e.offsetX == undefined ? e.layerX : e.offsetX;
 		var y = e.offsetY == undefined ? e.layerY : e.offsetY;
 		//alert(x +'x'+ y);
 
 		function result(a) {
-			return  a - a % 10;
+			return a - a % 10;
 		}
 
 		var a = result(x);
 		var b = result(y);
 		var pixelData = context.getImageData(event.offsetX, event.offsetY, 1, 1).data;
-		console.log(pixelData);
-		if(pixelData[3] == 255 ) {
+		//console.log(pixelData);
+		if (pixelData[3] == 255) {
 			context.beginPath();
 			context.moveTo(a, b);
 			context.clearRect(a + 1, b + 1, 9, 9);
-		}else{
+			die(a, b)
+		} else {
 			context.beginPath();
 			context.moveTo(a, b);
 			context.fillRect(a, b, 10, 10);
+			born(a, b);
 		}
+
+
 	};
 
+
+	var rows = 20;
+	var stolets = 40;
+	var gridWidth = stolets * 100 + 1;
+	var gridHeight = rows* 100 + 1;
+
+	var newUniverse = Object.create(Universe);
+	newUniverse.initialize(rows,stolets);
+
+
+	$('button#step').click(function(e){//debugger;
+		e.preventDefault();
+		newUniverse.checkThisGeneration();
+		console.log(nextGenerationCells);
+		newUniverse.updateGeneration();
+		console.log(newUniverse.field);
+		gridClear();
+		aliveCellDrawer();
+
+	});
+
+
+
+
+	function aliveCellDrawer() {//debugger;
+
+		for (var i = 0; i < objectLength(newUniverse.field); i++) {
+			for (var j = 0; j < objectLength(newUniverse.field[i]); j++) {
+				var thisCell = newUniverse.field[i][j];
+				if (thisCell.alive == true) {
+					context.beginPath();
+					context.moveTo(i * 10, j * 10);
+					context.fillRect(i * 10, j * 10, 10, 10);
+
+				}
+
+			}
+		}
+	}
+
 });
+
+
+
+
+
+
+
+
+//=================    sync UI and logic       ========================
 //TODO: html - пользователь задает клетки или по умолчанию (идея - режим интересные фигуры), поколения - вручную или автоматически
-//больше размер клетки? ведешь мышкой а не щелкаешь
-
-
+//больше размер клетки? ведешь мышкой а не щелкаешь? счетчик поколений
