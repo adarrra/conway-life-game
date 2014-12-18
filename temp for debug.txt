@@ -1,0 +1,17 @@
+newUniverse = Object.create (Universe);
+newUniverse.initialize(5,5);
+newUniverse.field[0][0].alive = true;
+newUniverse.field[0][1].alive = true;
+newUniverse.field[1][2].alive = true;
+newUniverse.field[2][1].alive = true;
+
+newUniverse.checkThisGeneration();
+
+nextGenerationCells;
+
+
+fix: 
+1)nextGenerationStatus function - conditions and remove apply, just check (return)
+2)nextGenerationCells - deep copy instead shallow copy (new object instead link)
+3)checkThisGeneration function - coordinates logic (add checkNeighborAndSetAlive function), nextGenerationCells - assign instead replace
+4) Universe initialize loop

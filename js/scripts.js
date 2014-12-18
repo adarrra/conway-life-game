@@ -86,28 +86,53 @@ var Universe = {
 
 };
 
-//for UI grid
-
- function gridDraw() {
-	for (var x=0.5; x < width; x += sizeCell){ //задать sizeCell, width, height
-		context.moveTo(x, 0);
-		context.lineTo(x, height);
-	}
-	for (var y=0.5; y <= height; y += sizeCell){
-		context.moveTo(0, y);
-		context.lineTo(width, y);
-	}
-	context.strokeStyle = '#eee';
-	context.fillStyle="#000";
-	context.stroke();
-};
-
+//=================    for UI grid       ========================
 jQuery(document).ready(function	() {
+
 	var grid_canvas = document.getElementById("grid");
 	var context = grid_canvas.getContext("2d");
+
+	function gridDraw() {
+		var sizeCell = 10;
+		for (var x = 0.5; x < 410; x += sizeCell) {
+			context.moveTo(x, 0);
+			context.lineTo(x, 400);
+		}
+		for (var y = 0.5; y <= 400; y += sizeCell) {
+			context.moveTo(0, y);
+			context.lineTo(400, y);
+		}
+		context.strokeStyle = 'black';
+		context.fillStyle = "#000";
+		context.stroke();
+	};
+	gridDraw();
+	document.getElementById('grid').onclick = function (e) {
+		var x = e.offsetX == undefined ? e.layerX : e.offsetX;
+		var y = e.offsetY == undefined ? e.layerY : e.offsetY;
+		//alert(x +'x'+ y);
+
+		function result(a) {
+			return  a - a % 10;
+		}
+
+		var a = result(x);
+		var b = result(y);
+		var pixelData = context.getImageData(event.offsetX, event.offsetY, 1, 1).data;
+		console.log(pixelData);
+		if(pixelData[3] == 255 ) {
+			context.beginPath();
+			context.moveTo(a, b);
+			context.clearRect(a + 1, b + 1, 9, 9);
+		}else{
+			context.beginPath();
+			context.moveTo(a, b);
+			context.fillRect(a, b, 10, 10);
+		}
+	};
+
 });
-
-
 //TODO: html - пользователь задает клетки или по умолчанию (идея - режим интересные фигуры), поколения - вручную или автоматически
+//больше размер клетки? ведешь мышкой а не щелкаешь
 
 
