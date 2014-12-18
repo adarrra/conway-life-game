@@ -22,7 +22,7 @@ var Cell = {
 	},
 	checkNextGenerationStatus: function (livingCells){
 		if(this.alive == true){
-			if(livingCells >= 4 ||livingCells == 1 ){
+			if(livingCells >= 4 ||livingCells <= 1 ){
 				return false;
 			}else if(livingCells >= 2){
 				return true;
@@ -76,16 +76,16 @@ var Universe = {
 
 
 		for(var i = 0; i < objectLength(this.field); i++) {
-			for(var j = 0; j <  objectLength(this.field[i]); j++) {//может добавить таки условие, чтоб только пустые с соседями
+			for(var j = 0; j <  objectLength(this.field[i]); j++) {
 				var thisCell = this.field[i][j];
-				Cell.neighbors.topNeighborAlive = this.checkNeighborAndSetAlive(i-1,j);
-				Cell.neighbors.rightTopNeighborAlive = this.checkNeighborAndSetAlive(i-1,j+1);
-				Cell.neighbors.rightNeighborAlive = this.checkNeighborAndSetAlive(i,j+1);
-				Cell.neighbors.bottomRightNeighborAlive = this.checkNeighborAndSetAlive(i+1,j+1);
-				Cell.neighbors.bottomNeighborAlive = this.checkNeighborAndSetAlive(i+1,j);
-				Cell.neighbors.bottomLeftNeighborAlive = this.checkNeighborAndSetAlive(i+1,j-1);
-				Cell.neighbors.leftNeighborAlive = this.checkNeighborAndSetAlive(i,j-1);
-				Cell.neighbors.topLeftNeighborAlive = this.checkNeighborAndSetAlive(i-1,j-1);
+				thisCell.neighbors.topNeighborAlive = this.checkNeighborAndSetAlive(i-1,j);
+				thisCell.neighbors.rightTopNeighborAlive = this.checkNeighborAndSetAlive(i-1,j+1);
+				thisCell.neighbors.rightNeighborAlive = this.checkNeighborAndSetAlive(i,j+1);
+				thisCell.neighbors.bottomRightNeighborAlive = this.checkNeighborAndSetAlive(i+1,j+1);
+				thisCell.neighbors.bottomNeighborAlive = this.checkNeighborAndSetAlive(i+1,j);
+				thisCell.neighbors.bottomLeftNeighborAlive = this.checkNeighborAndSetAlive(i+1,j-1);
+				thisCell.neighbors.leftNeighborAlive = this.checkNeighborAndSetAlive(i,j-1);
+				thisCell.neighbors.topLeftNeighborAlive = this.checkNeighborAndSetAlive(i-1,j-1);
 
 				nextGenerationCells[i][j].alive = thisCell.checkNextGenerationStatus(thisCell.livingNeighborCounter());
 			}
@@ -108,13 +108,13 @@ jQuery(document).ready(function	() {
 
 	function gridDraw() {
 		var sizeCell = 10;
-		for (var x = 0.5; x < 410; x += sizeCell) {
+		for (var x = 0.5; x < 110; x += sizeCell) {
 			context.moveTo(x, 0);
-			context.lineTo(x, 400);
+			context.lineTo(x, 100);
 		}
-		for (var y = 0.5; y <= 400; y += sizeCell) {
+		for (var y = 0.5; y <= 110; y += sizeCell) {
 			context.moveTo(0, y);
-			context.lineTo(400, y);
+			context.lineTo(100, y);
 		}
 		context.strokeStyle = 'black';
 		context.fillStyle = "#000";
@@ -122,8 +122,7 @@ jQuery(document).ready(function	() {
 	}
 
 	function gridClear(){
-		context.clearRect ( 0 , 0 , 401, 201 );
-		gridDraw();
+		context.clearRect ( 0 , 0 , 101, 101 );
 	}
 
 	gridDraw();
@@ -151,7 +150,6 @@ jQuery(document).ready(function	() {
 		var a = result(x);
 		var b = result(y);
 		var pixelData = context.getImageData(event.offsetX, event.offsetY, 1, 1).data;
-		//console.log(pixelData);
 		if (pixelData[3] == 255) {
 			context.beginPath();
 			context.moveTo(a, b);
@@ -168,8 +166,8 @@ jQuery(document).ready(function	() {
 	};
 
 
-	var rows = 20;
-	var stolets = 40;
+	var rows = 10;
+	var stolets = 10;
 	var gridWidth = stolets * 100 + 1;
 	var gridHeight = rows* 100 + 1;
 
@@ -184,6 +182,7 @@ jQuery(document).ready(function	() {
 		newUniverse.updateGeneration();
 		console.log(newUniverse.field);
 		gridClear();
+		gridDraw();
 		aliveCellDrawer();
 
 	});
@@ -198,8 +197,8 @@ jQuery(document).ready(function	() {
 				var thisCell = newUniverse.field[i][j];
 				if (thisCell.alive == true) {
 					context.beginPath();
-					context.moveTo(i * 10, j * 10);
-					context.fillRect(i * 10, j * 10, 10, 10);
+					context.moveTo(j * 10, i * 10);
+					context.fillRect(j * 10, i * 10, 10, 10);
 
 				}
 
