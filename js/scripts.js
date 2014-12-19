@@ -71,7 +71,7 @@ var Universe = {
 		}
 		return false;
 	},
-	checkThisGeneration: function(){/*debugger;*/
+	checkThisGeneration: function(){
 		nextGenerationCells = jQuery.extend(true, {}, this.field);
 
 
@@ -88,6 +88,7 @@ var Universe = {
 				thisCell.neighbors.topLeftNeighborAlive = this.checkNeighborAndSetAlive(i-1,j-1);
 
 				nextGenerationCells[i][j].alive = thisCell.checkNextGenerationStatus(thisCell.livingNeighborCounter());
+
 			}
 		}
 	},
@@ -103,18 +104,33 @@ var Universe = {
 //=================    for UI grid       ========================
 jQuery(document).ready(function	() {
 
+
+
+	var CELL_SIZE = 20;
+
+	var rows = 10;//получают значения из сет
+	var stolets = 10;//получают значения из сет
+	var gridWidth;
+	gridWidth = stolets * CELL_SIZE + 1;
+	var gridHeight;
+	gridHeight = rows * CELL_SIZE + 1;
+
+	var newUniverse = Object.create(Universe);
+	newUniverse.initialize(rows,stolets);
+
+
 	var grid_canvas = document.getElementById("grid");
 	var context = grid_canvas.getContext("2d");
 
 	function gridDraw() {
-		var SIZE_CELL = 10;
-		for (var x = 0.5; x < 110; x += SIZE_CELL) {
+
+		for (var x = 0.5; x < gridWidth - 1 + CELL_SIZE; x += CELL_SIZE) {
 			context.moveTo(x, 0);
-			context.lineTo(x, 100);
+			context.lineTo(x, gridWidth - 1);
 		}
-		for (var y = 0.5; y <= 110; y += SIZE_CELL) {
+		for (var y = 0.5; y <= gridHeight - 1 + CELL_SIZE; y += CELL_SIZE) {
 			context.moveTo(0, y);
-			context.lineTo(100, y);
+			context.lineTo(gridHeight - 1, y);
 		}
 		context.strokeStyle = 'black';
 		context.fillStyle = "#000";
@@ -122,43 +138,51 @@ jQuery(document).ready(function	() {
 	}
 
 	function gridClear(){
-		context.clearRect ( 0 , 0 , 101, 101 );
+		context.clearRect ( 0 , 0 , gridWidth, gridHeight );
 	}
 
 	gridDraw();
 
 	function born(a,b){
-		var s = a/10;
-		var r = b/10;
+		var s = a / CELL_SIZE;
+		var r = b / CELL_SIZE;
 		newUniverse.field[r][s].alive = true;
+		console.log(r, s);
+		console.log(newUniverse.field);
 	}
 	function die(a,b){
-		var s = a/10;
-		var r = b/10;
+		var s = a / CELL_SIZE;
+		var r = b / CELL_SIZE;
 		newUniverse.field[r][s].alive = false;
+	}
+
+	function result(c) {
+		return Math.floor(c / CELL_SIZE)* CELL_SIZE;
 	}
 
 	document.getElementById('grid').onclick = function (e) {
 		var x = e.offsetX == undefined ? e.layerX : e.offsetX;
 		var y = e.offsetY == undefined ? e.layerY : e.offsetY;
 		//alert(x +'x'+ y);
+		console.log(x , y);
 
-		function result(a) {
-			return a - a % 10;
-		}
+
+
+
 
 		var a = result(x);
 		var b = result(y);
+		console.log(a , b);
 		var pixelData = context.getImageData(event.offsetX, event.offsetY, 1, 1).data;
 		if (pixelData[3] == 255) {
 			context.beginPath();
 			context.moveTo(a, b);
-			context.clearRect(a + 1, b + 1, 9, 9);
+			context.clearRect(a + 1, b + 1, CELL_SIZE - 1, CELL_SIZE - 1);
 			die(a, b)
 		} else {
 			context.beginPath();
 			context.moveTo(a, b);
-			context.fillRect(a, b, 10, 10);
+			context.fillRect(a, b, CELL_SIZE, CELL_SIZE);
 			born(a, b);
 		}
 
@@ -166,18 +190,11 @@ jQuery(document).ready(function	() {
 	};
 
 
-	var rows = 10;//получают значения из сет
-	var stolets = 10;//получают значения из сет
-	var gridWidth = stolets * 100 + 1;
-	var gridHeight = rows* 100 + 1;
-
-	var newUniverse = Object.create(Universe);
-	newUniverse.initialize(rows,stolets);
-
-
 	$('button#step').click(function (e){
 		e.preventDefault();
-		lifeProcess()
+		console.log(newUniverse.field);
+		lifeProcess();
+		console.log(newUniverse.field);
 
 	});
 
@@ -188,9 +205,9 @@ jQuery(document).ready(function	() {
 	}
 
 	function lifeProcess(){
+
 		newUniverse.checkThisGeneration();
 		newUniverse.updateGeneration();
-		console.log(newUniverse.field);
 		gridClear();
 		gridDraw();
 		aliveCellDrawer();
@@ -199,15 +216,18 @@ jQuery(document).ready(function	() {
 	}
 
 
-	function aliveCellDrawer() {//debugger;
+	function aliveCellDrawer() {
 
 		for (var i = 0; i < objectLength(newUniverse.field); i++) {
 			for (var j = 0; j < objectLength(newUniverse.field[i]); j++) {
 				var thisCell = newUniverse.field[i][j];
 				if (thisCell.alive == true) {
 					context.beginPath();
-					context.moveTo(j * 10, i * 10);
-					context.fillRect(j * 10, i * 10, 10, 10);
+					var x = result(j * CELL_SIZE);
+					var y = result(i * CELL_SIZE);
+					context.moveTo(x, y);
+					context.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+					console.log(x, y);
 
 				}
 
