@@ -99,38 +99,52 @@ var Universe = {
 
 };
 
+//=================   UI grid  and sync      ========================
 
 
-//=================    for UI grid       ========================
 jQuery(document).ready(function	() {
+///////////
 
-
+/*
+set scale of grid and Universe object
+ *  */
 
 	var CELL_SIZE = 20;
 
-	var rows = 10;//получают значения из сет
-	var stolets = 10;//получают значения из сет
+	var rows;
+	var stolets;
 	var gridWidth;
-	gridWidth = stolets * CELL_SIZE + 1;
 	var gridHeight;
-	gridHeight = rows * CELL_SIZE + 1;
 
 	var newUniverse = Object.create(Universe);
-	newUniverse.initialize(rows,stolets);
 
+	function beginningOfTheWorld(stolets,rows){
+		gridWidth = stolets * CELL_SIZE + 1;
+		gridHeight = rows * CELL_SIZE + 1;
+		$( "canvas#grid" ).attr( "width", gridWidth );
+		$( "canvas#grid" ).attr( "height", gridHeight );
+		newUniverse.initialize(rows,stolets)
+
+	}
+
+	beginningOfTheWorld(20,15); //default
+
+
+/*
+draw basic grid
+* */
 
 	var grid_canvas = document.getElementById("grid");
 	var context = grid_canvas.getContext("2d");
 
 	function gridDraw() {
-
 		for (var x = 0.5; x < gridWidth - 1 + CELL_SIZE; x += CELL_SIZE) {
 			context.moveTo(x, 0);
-			context.lineTo(x, gridWidth - 1);
+			context.lineTo(x, gridWidth - 1 + CELL_SIZE);
 		}
-		for (var y = 0.5; y <= gridHeight - 1 + CELL_SIZE; y += CELL_SIZE) {
+		for (var y = 0.5; y <= gridWidth - 1 + CELL_SIZE; y += CELL_SIZE) { //пока не разобралась почему тут width.. методом тыка подошло
 			context.moveTo(0, y);
-			context.lineTo(gridHeight - 1, y);
+			context.lineTo(gridWidth - 1 + CELL_SIZE, y);
 		}
 		context.strokeStyle = 'black';
 		context.fillStyle = "#000";
@@ -143,12 +157,14 @@ jQuery(document).ready(function	() {
 
 	gridDraw();
 
+/*
+creating of new cells	or deleting them
+*/
+
 	function born(a,b){
 		var s = a / CELL_SIZE;
 		var r = b / CELL_SIZE;
 		newUniverse.field[r][s].alive = true;
-		console.log(r, s);
-		console.log(newUniverse.field);
 	}
 	function die(a,b){
 		var s = a / CELL_SIZE;
@@ -163,16 +179,10 @@ jQuery(document).ready(function	() {
 	document.getElementById('grid').onclick = function (e) {
 		var x = e.offsetX == undefined ? e.layerX : e.offsetX;
 		var y = e.offsetY == undefined ? e.layerY : e.offsetY;
-		//alert(x +'x'+ y);
-		console.log(x , y);
-
-
-
-
 
 		var a = result(x);
 		var b = result(y);
-		console.log(a , b);
+
 		var pixelData = context.getImageData(event.offsetX, event.offsetY, 1, 1).data;
 		if (pixelData[3] == 255) {
 			context.beginPath();
@@ -189,14 +199,27 @@ jQuery(document).ready(function	() {
 
 	};
 
+/*
+set drawing of survival cells and life process
+	*/
 
-	$('button#step').click(function (e){
-		e.preventDefault();
-		console.log(newUniverse.field);
-		lifeProcess();
-		console.log(newUniverse.field);
+	function aliveCellDrawer() {
 
-	});
+		for (var i = 0; i < objectLength(newUniverse.field); i++) {
+			for (var j = 0; j < objectLength(newUniverse.field[i]); j++) {
+				var thisCell = newUniverse.field[i][j];
+				if (thisCell.alive == true) {
+					context.beginPath();
+					var x = result(j * CELL_SIZE);
+					var y = result(i * CELL_SIZE);
+					context.moveTo(x, y);
+					context.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+
+				}
+
+			}
+		}
+	}
 
 	function updateGenerationCounter(){
 		$('span.generation-counter').text (
@@ -216,24 +239,24 @@ jQuery(document).ready(function	() {
 	}
 
 
-	function aliveCellDrawer() {
+/*
+ set  buttons
+ */
 
-		for (var i = 0; i < objectLength(newUniverse.field); i++) {
-			for (var j = 0; j < objectLength(newUniverse.field[i]); j++) {
-				var thisCell = newUniverse.field[i][j];
-				if (thisCell.alive == true) {
-					context.beginPath();
-					var x = result(j * CELL_SIZE);
-					var y = result(i * CELL_SIZE);
-					context.moveTo(x, y);
-					context.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-					console.log(x, y);
+	$('button#set').click(function (e){
+		e.preventDefault();
+		var newRows = parseInt($('input#gridHeight').val());
+		var newStolets = parseInt($('input#gridWidth').val());
+		beginningOfTheWorld(newRows,newStolets);
+		gridDraw();
 
-				}
+	});
 
-			}
-		}
-	}
+	$('button#step').click(function (e){
+		e.preventDefault();
+		lifeProcess();
+			});
+
 
 
 	var autoLife;
@@ -267,11 +290,15 @@ jQuery(document).ready(function	() {
 
 	});
 
-/////////////////////////////
+////////////////////////////////////
 });
 
+/*
+ set  auxiliary functions
+ */
 
-$.fn.clicktoggle = function(a, b) {  //this one instead of old deprecated function toggle()
+//this one instead of old deprecated function toggle()
+$.fn.clicktoggle = function(a, b) {
 	return this.each(function() {
 		var clicked = false;
 		$(this).click(function() {
@@ -289,6 +316,6 @@ $.fn.clicktoggle = function(a, b) {  //this one instead of old deprecated functi
 
 
 
-//=================    sync UI and logic       ========================
-//TODO: html - пользователь задает клетки или по умолчанию (идея - режим интересные фигуры), поколения - вручную или автоматически
-//больше размер клетки? ведешь мышкой а не щелкаешь? счетчик поколений
+//========================================
+//TODO: (идея - режим интересные фигуры), сделать бесконечное поле, баг с ховером , баг с сетом
+//больше размер клетки? ведешь мышкой а не щелкаешь?
