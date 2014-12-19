@@ -107,12 +107,12 @@ jQuery(document).ready(function	() {
 	var context = grid_canvas.getContext("2d");
 
 	function gridDraw() {
-		var sizeCell = 10;
-		for (var x = 0.5; x < 110; x += sizeCell) {
+		var SIZE_CELL = 10;
+		for (var x = 0.5; x < 110; x += SIZE_CELL) {
 			context.moveTo(x, 0);
 			context.lineTo(x, 100);
 		}
-		for (var y = 0.5; y <= 110; y += sizeCell) {
+		for (var y = 0.5; y <= 110; y += SIZE_CELL) {
 			context.moveTo(0, y);
 			context.lineTo(100, y);
 		}
@@ -166,8 +166,8 @@ jQuery(document).ready(function	() {
 	};
 
 
-	var rows = 10;
-	var stolets = 10;
+	var rows = 10;//получают значения из сет
+	var stolets = 10;//получают значения из сет
 	var gridWidth = stolets * 100 + 1;
 	var gridHeight = rows* 100 + 1;
 
@@ -175,19 +175,28 @@ jQuery(document).ready(function	() {
 	newUniverse.initialize(rows,stolets);
 
 
-	$('button#step').click(function(e){//debugger;
+	$('button#step').click(function (e){
 		e.preventDefault();
+		lifeProcess()
+
+	});
+
+	function updateGenerationCounter(){
+		$('span.generation-counter').text (
+			parseInt($('span.generation-counter').text()) + 1
+		);
+	}
+
+	function lifeProcess(){
 		newUniverse.checkThisGeneration();
-		console.log(nextGenerationCells);
 		newUniverse.updateGeneration();
 		console.log(newUniverse.field);
 		gridClear();
 		gridDraw();
 		aliveCellDrawer();
+		updateGenerationCounter()
 
-	});
-
-
+	}
 
 
 	function aliveCellDrawer() {//debugger;
@@ -206,10 +215,55 @@ jQuery(document).ready(function	() {
 		}
 	}
 
+
+	var autoLife;
+
+	$("button#auto").clicktoggle(
+		function(){
+			$(this).text('Stop');
+			autoLife  = setInterval(function() {
+				lifeProcess()
+			}, 800)
+
+		},
+		function(){
+			$(this).text('Auto');
+			clearInterval(autoLife)
+		}
+	);
+
+	$('button#reset').click(function (e) {
+		e.preventDefault();
+		$("button#auto").text('Auto');
+		clearInterval(autoLife);
+		gridClear();
+		gridDraw();
+		for (var i = 0; i < objectLength(newUniverse.field); i++) {
+			for (var j = 0; j < objectLength(newUniverse.field[i]); j++) {
+				newUniverse.field[i][j].alive = false;
+			}
+		}
+		$('span.generation-counter').text(0);
+
+	});
+
+/////////////////////////////
 });
 
 
-
+$.fn.clicktoggle = function(a, b) {  //this one instead of old deprecated function toggle()
+	return this.each(function() {
+		var clicked = false;
+		$(this).click(function() {
+			if (clicked) {
+				clicked = false;
+				return b.apply(this, arguments);
+			}
+			clicked = true;
+			return a.apply(this, arguments);
+		});
+	});
+};
 
 
 
