@@ -13,7 +13,7 @@
 <div class="container">
 	<h1>Game of Life</h1>
 	<div class="row">
-		<div class="scale col-md-12">
+		<div class="scale col-md-4">
 			<div class="control-group">
 				<legend>Scale</legend>
 				<form class="form-inline">
@@ -27,14 +27,26 @@
 				</form>
 			</div>
 		</div>
+		<div class="generation-counter">
+			Generation: <span class="generation-counter">0</span>
+		</div>
 	</div>
 	<div class="row">
 		<div class="grid col-md-5">
 			<canvas id = "grid" width="" height="">
 			</canvas>
 		</div>
-			<div class="generation-counter">
-				Generation: <span class="generation-counter">0</span>
+			<div class="info">
+				<p>
+					<strong>Rules for Game of Life:</strong>
+					</br>
+					</br>Any live cell with fewer than two neighbors dies of loneliness.
+					</br>Any live cell with more than three neighbors dies of crowding.
+					</br>Any dead cell with exactly three neighbors comes to life.
+					</br>Any live cell with two or three neighbors lives, unchanged, to the next generation.
+					</br>
+					</br>All births and deaths occur simultaineously. Read more about Game of Life in <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Wikipedia</a>.
+				</p>
 			</div>
 
 	</div>
@@ -44,8 +56,8 @@
 				<button id="reset" type="submit" class="btn btn-danger">Reset</button>
 				<button id="step" type="submit" class="btn btn-primary">Step</button>
 				<button id="auto" type="button" class="btn btn-success">Auto</button>
-				<!--<button id="forms" type="submit" class="btn btn-warning">Interesting forms</button>
-				<button id="info" type="submit" class="btn btn-info">Info</button>-->
+				<!--<button id="forms" type="submit" class="btn btn-warning">Interesting forms</button>-->
+				<button id="info" type="submit" class="btn btn-info">Info</button>
 			</form>
 		</div>
 	</div>

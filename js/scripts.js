@@ -273,7 +273,6 @@ jQuery(document).ready(function	() {
 	});
 
 
-
 	var autoLife;
 
 	$("button#auto").clicktoggle(
@@ -303,6 +302,11 @@ jQuery(document).ready(function	() {
 		}
 		$('span.generation-counter').text(0);
 
+	});
+
+	$('button#info').click(function (e){
+		e.preventDefault();
+		$('.info').toggle();
 	});
 
 ////////////////////////////////////

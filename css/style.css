@@ -10,3 +10,7 @@ legend{
 .scale, .grid{
     margin-bottom: 20px;
 }
+
+.info{
+    display: none;
+}
