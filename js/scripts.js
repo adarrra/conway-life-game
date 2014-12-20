@@ -1,3 +1,6 @@
+/**
+ * Created by МиниДашаиПаша on 19.12.2014.
+ */
 //=================    Logic       ========================
 
 var Cell = {
@@ -105,9 +108,9 @@ var Universe = {
 jQuery(document).ready(function	() {
 ///////////
 
-/*
-set scale of grid and Universe object
- *  */
+	/*
+	 set scale of grid and Universe object
+	 *  */
 
 	var CELL_SIZE = 20;
 
@@ -115,36 +118,48 @@ set scale of grid and Universe object
 	var stolets;
 	var gridWidth;
 	var gridHeight;
+	var side;
 
 	var newUniverse = Object.create(Universe);
+
+	function calculateSide(gw,gh){
+		if(gw > gh){
+			side = gw;
+		}else{
+			side = gh
+		}
+		side = side - 1 + CELL_SIZE;
+	}
 
 	function beginningOfTheWorld(stolets,rows){
 		gridWidth = stolets * CELL_SIZE + 1;
 		gridHeight = rows * CELL_SIZE + 1;
 		$( "canvas#grid" ).attr( "width", gridWidth );
 		$( "canvas#grid" ).attr( "height", gridHeight );
-		newUniverse.initialize(rows,stolets)
+		newUniverse.initialize(rows,stolets);
+		calculateSide(gridWidth,gridHeight);//добавить в сет.клик
 
 	}
 
-	beginningOfTheWorld(20,15); //default
+	beginningOfTheWorld(20,15); //default value
 
 
-/*
-draw basic grid
-* */
+	/*
+	 draw basic grid
+	 * */
 
 	var grid_canvas = document.getElementById("grid");
 	var context = grid_canvas.getContext("2d");
 
 	function gridDraw() {
-		for (var x = 0.5; x < gridWidth - 1 + CELL_SIZE; x += CELL_SIZE) {
+
+		for (var x = 0.5; x < side; x += CELL_SIZE) {
 			context.moveTo(x, 0);
-			context.lineTo(x, gridWidth - 1 + CELL_SIZE);
+			context.lineTo(x, side);
 		}
-		for (var y = 0.5; y <= gridWidth - 1 + CELL_SIZE; y += CELL_SIZE) { //пока не разобралась почему тут width.. методом тыка подошло
+		for (var y = 0.5; y <= side; y += CELL_SIZE) { //пока не разобралась почему тут width.. методом тыка подошло
 			context.moveTo(0, y);
-			context.lineTo(gridWidth - 1 + CELL_SIZE, y);
+			context.lineTo(side, y);
 		}
 		context.strokeStyle = 'black';
 		context.fillStyle = "#000";
@@ -157,9 +172,9 @@ draw basic grid
 
 	gridDraw();
 
-/*
-creating of new cells	or deleting them
-*/
+	/*
+	 creating of new cells	or deleting them
+	 */
 
 	function born(a,b){
 		var s = a / CELL_SIZE;
@@ -199,9 +214,9 @@ creating of new cells	or deleting them
 
 	};
 
-/*
-set drawing of survival cells and life process
-	*/
+	/*
+	 set drawing of survival cells and life process
+	 */
 
 	function aliveCellDrawer() {
 
@@ -239,15 +254,15 @@ set drawing of survival cells and life process
 	}
 
 
-/*
- set  buttons
- */
+	/*
+	 set  buttons
+	 */
 
-	$('button#set').click(function (e){
+	$('button#set').click(function (e){//debugger;
 		e.preventDefault();
-		var newRows = parseInt($('input#gridHeight').val());
 		var newStolets = parseInt($('input#gridWidth').val());
-		beginningOfTheWorld(newRows,newStolets);
+		var newRows = parseInt($('input#gridHeight').val());
+		beginningOfTheWorld(newStolets,newRows);
 		gridDraw();
 
 	});
@@ -255,7 +270,7 @@ set drawing of survival cells and life process
 	$('button#step').click(function (e){
 		e.preventDefault();
 		lifeProcess();
-			});
+	});
 
 
 
@@ -318,4 +333,4 @@ $.fn.clicktoggle = function(a, b) {
 
 //========================================
 //TODO: (идея - режим интересные фигуры), сделать бесконечное поле, баг с ховером , баг с сетом
-//больше размер клетки? ведешь мышкой а не щелкаешь?
+//больше размер клетки? ведешь мышкой а не щелкаешь? , можно чтоб человек сам задавал скорость
