@@ -1,6 +1,3 @@
-/**
- * Created by МиниДашаиПаша on 19.12.2014.
- */
 //=================    Logic       ========================
 
 var Cell = {
@@ -100,6 +97,14 @@ var Universe = {
 	}
 
 
+};
+
+var forms = {
+	Glider: [[0,0],[0,2],[1,1],[1,2],[2,1]],
+	Still_lifes:[[0,0],[0,1],[1,0],[1,1]],
+
+	key: function(n) {
+		return this[Object.keys(this)[n]]}
 };
 
 //=================   UI grid  and sync      ========================
@@ -289,20 +294,52 @@ jQuery(document).ready(function	() {
 		}
 	);
 
-	$('button#reset').click(function (e) {
-		e.preventDefault();
-		$("button#auto").text('Auto');
-		clearInterval(autoLife);
-		gridClear();
-		gridDraw();
+	function allCellsMustDie(){
 		for (var i = 0; i < objectLength(newUniverse.field); i++) {
 			for (var j = 0; j < objectLength(newUniverse.field[i]); j++) {
 				newUniverse.field[i][j].alive = false;
 			}
 		}
-		$('span.generation-counter').text(0);
+	}
 
+	function reset(){
+		$("button#auto").text('Auto');
+		clearInterval(autoLife);
+		gridClear();
+		gridDraw();
+		allCellsMustDie();
+		$('span.generation-counter').text(0);
+	}
+
+	$('button#reset').click(function (e) {
+		e.preventDefault();
+		reset();
 	});
+
+	$('button#forms').click(function (e){//debugger;
+		e.preventDefault();
+		$(this).text('One more');
+		reset();
+		formCreator(formCounter);
+		aliveCellDrawer()
+	});
+
+	var formCounter = 0;
+	function formCreator(fc){//debugger;
+		var formName = forms.key(fc);
+		console.log(formName);
+		for(var i = 0; i < objectLength(formName); i++){
+			var r = formName[i][0];
+			var s = formName[i][1];
+			newUniverse.field[r][s].alive = true;
+		}
+		if (formCounter < objectLength(forms)-2) {
+			formCounter += 1
+		} else{
+			formCounter = 0
+		}
+
+	}
 
 	$('button#info').click(function (e){
 		e.preventDefault();
@@ -316,7 +353,7 @@ jQuery(document).ready(function	() {
  set  auxiliary functions
  */
 
-//this one instead of old deprecated function toggle()
+//this one instead of deprecated function toggle()
 $.fn.clicktoggle = function(a, b) {
 	return this.each(function() {
 		var clicked = false;
@@ -336,5 +373,6 @@ $.fn.clicktoggle = function(a, b) {
 
 
 //========================================
-//TODO: (идея - режим интересные фигуры), сделать бесконечное поле, баг с ховером , баг с сетом
+//TODO: (идея - режим интересные фигуры), сделать бесконечное поле, баг с ховером
 //больше размер клетки? ведешь мышкой а не щелкаешь? , можно чтоб человек сам задавал скорость
+//наползание канвас на соседнюю колонку.
