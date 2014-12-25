@@ -1,6 +1,3 @@
-/**
- * Created by МиниДашаиПаша on 19.12.2014.
- */
 //=================    Logic       ========================
 
 var Cell = {
@@ -102,6 +99,15 @@ var Universe = {
 
 };
 
+var forms = {
+	Glider: [[0,0],[0,2],[1,1],[1,2],[2,1]],
+	Still_lifes:[[0,0],[0,1],[1,0],[1,1]],
+	Pulsar:[[1,5], [1,6],[1,7],[1,11],[1,12],[1,13],[3,3],[3,8],[3,10],[3,15], [4,3],[4,8],[4,10],[4,15],[5,3],[5,8],[5,10],[5,15],[6,5], [6,6],[6,7],[6,11],[6,12],[6,13],[8,5], [8,6],[8,7],[8,11],[8,12],[8,13],[9,3],[9,8],[9,10],[9,15],[10,3],[10,8],[10,10],[10,15],[11,3],[11,8],[11,10],[11,15],[13,5],[13,6],[13,7],[13,11],[13,12],[13,13]],
+
+	key: function(n) {
+		return this[Object.keys(this)[n]]}
+};
+
 //=================   UI grid  and sync      ========================
 
 
@@ -157,7 +163,7 @@ jQuery(document).ready(function	() {
 			context.moveTo(x, 0);
 			context.lineTo(x, side);
 		}
-		for (var y = 0.5; y <= side; y += CELL_SIZE) { //пока не разобралась почему тут width.. методом тыка подошло
+		for (var y = 0.5; y <= side; y += CELL_SIZE) {
 			context.moveTo(0, y);
 			context.lineTo(side, y);
 		}
@@ -289,20 +295,52 @@ jQuery(document).ready(function	() {
 		}
 	);
 
-	$('button#reset').click(function (e) {
-		e.preventDefault();
-		$("button#auto").text('Auto');
-		clearInterval(autoLife);
-		gridClear();
-		gridDraw();
+	function allCellsMustDie(){
 		for (var i = 0; i < objectLength(newUniverse.field); i++) {
 			for (var j = 0; j < objectLength(newUniverse.field[i]); j++) {
 				newUniverse.field[i][j].alive = false;
 			}
 		}
-		$('span.generation-counter').text(0);
+	}
 
+	function reset(){
+		$("button#auto").text('Auto');
+		clearInterval(autoLife);
+		gridClear();
+		gridDraw();
+		allCellsMustDie();
+		$('span.generation-counter').text(0);
+	}
+
+	$('button#reset').click(function (e) {
+		e.preventDefault();
+		reset();
 	});
+
+	$('button#forms').click(function (e){//debugger;
+		e.preventDefault();
+		$(this).text('One more');
+		reset();
+		formCreator(formCounter);
+		aliveCellDrawer()
+	});
+
+	var formCounter = 0;
+	function formCreator(fc){//debugger;
+		var formName = forms.key(fc);
+		console.log(formName);
+		for(var i = 0; i < objectLength(formName); i++){
+			var r = formName[i][0];
+			var s = formName[i][1];
+			newUniverse.field[r][s].alive = true;
+		}
+		if (formCounter < objectLength(forms)-2) {
+			formCounter += 1
+		} else{
+			formCounter = 0
+		}
+
+	}
 
 	$('button#info').click(function (e){
 		e.preventDefault();
@@ -316,7 +354,7 @@ jQuery(document).ready(function	() {
  set  auxiliary functions
  */
 
-//this one instead of old deprecated function toggle()
+//this one instead of deprecated function toggle()
 $.fn.clicktoggle = function(a, b) {
 	return this.each(function() {
 		var clicked = false;
@@ -336,5 +374,6 @@ $.fn.clicktoggle = function(a, b) {
 
 
 //========================================
-//TODO: (идея - режим интересные фигуры), сделать бесконечное поле, баг с ховером , баг с сетом
+//TODO: (идея - режим интересные фигуры), сделать бесконечное поле, баг с ховером
 //больше размер клетки? ведешь мышкой а не щелкаешь? , можно чтоб человек сам задавал скорость
+//наползание канвас на соседнюю колонку.
