@@ -13,7 +13,7 @@
 <div class="container">
 	<h1>Game of Life</h1>
 	<div class="row">
-		<div class="scale col-md-4">
+		<div class="scale col-md-5 col-sm-7">
 			<div class="control-group">
 				<legend>Scale</legend>
 				<form class="form-inline">
@@ -26,17 +26,18 @@
 					<button id = "set" type="submit" class="btn btn-default">Set</button>
 				</form>
 			</div>
+			<div class="generation-counter text-right">
+				Generation: <span class="generation-counter">0</span>
+			</div>
 		</div>
-		<div class="generation-counter">
-			Generation: <span class="generation-counter">0</span>
-		</div>
+
 	</div>
 	<div class="row">
-		<div class="grid col-md-5">
+		<div class="grid col-md-5 col-sm-7">
 			<canvas id = "grid" width="" height="">
 			</canvas>
 		</div>
-			<div class="info">
+			<div class="info  col-md-5 col-sm-5">
 				<p>
 					<strong>Rules for Game of Life:</strong>
 					</br>
