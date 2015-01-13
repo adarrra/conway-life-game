@@ -11,6 +11,11 @@ legend{
     margin-bottom: 20px;
 }
 
-.info{
-    display: none;
+.generation-counter{
+    padding-top: 20px;
+    padding-right: 32px;
+    font-weight: bold;
+}
+span.generation-counter{
+    color:red;
 }
