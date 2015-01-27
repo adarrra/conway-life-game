@@ -198,13 +198,24 @@ jQuery(document).ready(function	() {
 	}
 
 	document.getElementById('grid').onclick = function (e) {
-		var x = e.offsetX == undefined ? e.layerX : e.offsetX;
-		var y = e.offsetY == undefined ? e.layerY : e.offsetY;
+	/*	var x = e.offsetX == undefined ? e.layerX : e.offsetX;
+		var y = e.offsetY == undefined ? e.layerY : e.offsetY;*/
+
+        if(e.offsetX==undefined) // this works for Firefox
+        {
+            var x = e.pageX-$('#grid').offset().left;
+            var y = e.pageY-$('#grid').offset().top;
+        }
+        else                     // works in Google Chrome
+        {
+            var x = e.offsetX;
+            var y = e.offsetY;
+        }
 
 		var a = result(x);
 		var b = result(y);
 
-		var pixelData = context.getImageData(event.offsetX, event.offsetY, 1, 1).data;
+		var pixelData = context.getImageData(x, y, 1, 1).data;
 		if (pixelData[3] == 255) {
 			context.beginPath();
 			context.moveTo(a, b);
